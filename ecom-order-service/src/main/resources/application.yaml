@@ -1,0 +1,10 @@
+spring:
+  application:
+    name: ecom-order-service
+
+server:
+  port: 8080
+
+logging:
+  level:
+    com.rogerstore.ecomorderservice.client: DEBUG
