@@ -1,0 +1,36 @@
+spring:
+  application:
+    name: ecom-api-gateway
+  cloud:
+    gateway:
+      server:
+        webflux:
+          routes:
+          - id: ecom-order-service
+            uri: lb://ecom-order-service
+            predicates:
+              - Path=/order/**
+          - id: ecom-inventory-service
+            uri: lb://ecom-inventory-service
+            predicates:
+              - Path=/inventory/**
+
+
+#static routing
+#        - id: ecom-order-service
+#          uri: 'http://localhost:8080'
+#          predicates:
+#            - Path=/order/**
+
+
+server:
+  port: 9090
+eureka:
+  client:
+    service-url:
+      defaultZone: 'http://localhost:8761/eureka'
+
+
+
+
+
