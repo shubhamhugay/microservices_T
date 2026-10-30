@@ -14,12 +14,14 @@ public class OrderService {
     private final RestClient restClient;
     private final RestTemplate restTemplate;
     private final InventoryClient inventoryClient;
+    private final InventoryService inventoryService;
 
 
-    public OrderService(RestClient restClient, RestTemplate restTemplate, InventoryClient inventoryClient) {
+    public OrderService(RestClient restClient, RestTemplate restTemplate, InventoryClient inventoryClient, InventoryService inventoryService) {
         this.restClient = restClient;
         this.restTemplate = restTemplate;
         this.inventoryClient = inventoryClient;
+        this.inventoryService = inventoryService;
     }
 
 
@@ -59,7 +61,7 @@ public class OrderService {
                 }));*/
 
 
-        Inventory inventory = inventoryClient.getInventory(productId);
+        Inventory inventory = inventoryService.getInventory(productId);
         updateInventory(inventory);
 //        return entity.getBody()!=null && entity.getBody().getQuantity()>0?
 //                     "Order PLaced" : "order not PLaced";

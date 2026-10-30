@@ -17,10 +17,10 @@ public class InventoryController {
 
 
     @GetMapping("/{productId}")
-    public Inventory checkInventory(@PathVariable Long productId) throws InterruptedException {
+    public Inventory checkInventory(@PathVariable Long productId) throws Exception {
 //        Thread.sleep(5000);
-
-        return inventoryService.checkStock(productId);
+throw new Exception("inventory service is down");
+//        return inventoryService.checkStock(productId);
     }
 
     @PostMapping
