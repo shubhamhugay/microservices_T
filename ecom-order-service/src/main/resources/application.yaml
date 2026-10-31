@@ -15,3 +15,18 @@ eureka:
     fetch-registry: true
     service-url:
       defaultZone: http://localhost:8761/eureka/
+
+resilience4j:
+  ratelimiter:
+    configs:
+      default:
+        # The number of permissions available during one limit refresh period
+        limit-for-period: 2
+        # The period of a limit refresh. After each period, the rate limiter sets its permissions count back to the limit-for-period value
+        limit-refresh-period: 10s
+        # The default wait time a thread waits for a permission before failing
+        timeout-duration: 0s
+        # Configures whether the rate limiter should register the health indicator
+#        register-health-indicator: true
+        # Configures whether event consumer buffer size
+#        event-consumer-buffer-size: 100
