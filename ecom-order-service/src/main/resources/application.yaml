@@ -30,3 +30,31 @@ resilience4j:
 #        register-health-indicator: true
         # Configures whether event consumer buffer size
 #        event-consumer-buffer-size: 100
+  circuitbreaker:
+    instances:
+      inventoryServiceCircuitBreaker:
+
+        # Sliding Window Configuration
+        sliding-window-type: COUNT_BASED #time /count based
+        sliding-window-size: 6 #check last 10 calls
+        minimum-number-of-calls: 5 # m
+
+        # Failure Threshold
+        failure-rate-threshold: 50
+
+
+        # Open State Configuration
+        wait-duration-in-open-state: 10s
+
+        # Half Open Configuration
+        permitted-number-of-calls-in-half-open-state: 3
+        max-wait-duration-in-half-open-state: 5s
+        automatic-transition-from-open-to-half-open-enabled: true
+
+        record-exceptions:
+          - java.lang.RuntimeException
+          - java.io.IOException
+          - org.springframework.web.client.HttpServerErrorException
+
+        ignore-exceptions:
+          - java.lang.IllegalArgumentException
