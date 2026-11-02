@@ -61,7 +61,7 @@ public class OrderService {
                 }));*/
 
 
-        Inventory inventory = inventoryService.getInventory(productId);
+        Inventory inventory = inventoryService.getInventory(productId).join();
         updateInventory(inventory);
 //        return entity.getBody()!=null && entity.getBody().getQuantity()>0?
 //                     "Order PLaced" : "order not PLaced";

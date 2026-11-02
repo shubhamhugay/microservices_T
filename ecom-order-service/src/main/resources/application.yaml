@@ -22,26 +22,30 @@ resilience4j:
       default:
         # The number of permissions available during one limit refresh period
         limit-for-period: 2
-        # The period of a limit refresh. After each period, the rate limiter sets its permissions count back to the limit-for-period value
+
+        # The period after which the permissions count resets
         limit-refresh-period: 10s
-        # The default wait time a thread waits for a permission before failing
+
+        # Maximum time a thread waits for permission before failing
         timeout-duration: 0s
-        # Configures whether the rate limiter should register the health indicator
-#        register-health-indicator: true
-        # Configures whether event consumer buffer size
-#        event-consumer-buffer-size: 100
+
+        # Register the rate limiter health indicator
+        # register-health-indicator: true
+
+        # Event consumer buffer size
+        # event-consumer-buffer-size: 100
+
   circuitbreaker:
     instances:
       inventoryServiceCircuitBreaker:
 
         # Sliding Window Configuration
-        sliding-window-type: COUNT_BASED #time /count based
-        sliding-window-size: 6 #check last 10 calls
-        minimum-number-of-calls: 5 # m
+        sliding-window-type: COUNT_BASED # TIME_BASED or COUNT_BASED
+        sliding-window-size: 6 # Check the last 6 calls
+        minimum-number-of-calls: 5 # Minimum calls required before calculating failure rate
 
         # Failure Threshold
         failure-rate-threshold: 50
-
 
         # Open State Configuration
         wait-duration-in-open-state: 10s
@@ -51,10 +55,18 @@ resilience4j:
         max-wait-duration-in-half-open-state: 5s
         automatic-transition-from-open-to-half-open-enabled: true
 
+        # Exceptions to record as failures
         record-exceptions:
           - java.lang.RuntimeException
           - java.io.IOException
           - org.springframework.web.client.HttpServerErrorException
 
+        # Exceptions to ignore
         ignore-exceptions:
           - java.lang.IllegalArgumentException
+
+  timelimiter:
+    instances:
+      inventoryServiceTimeLimiter:
+        timeout-duration: 2s
+        cancel-running-future: true
