@@ -1,72 +1,61 @@
 spring:
   application:
     name: ecom-order-service
-
+  cloud:
+    openfeign:
+      client:
+        config:
+          ecom-inventory-service:
+            connectTimeout: 2000
+            readTimeout: 30000
 server:
   port: 8080
-
 logging:
   level:
     com.rogerstore.ecomorderservice.client: DEBUG
-
 eureka:
   client:
     register-with-eureka: true
     fetch-registry: true
     service-url:
-      defaultZone: http://localhost:8761/eureka/
-
+      defaultZone: 'http://localhost:8761/eureka/'
 resilience4j:
   ratelimiter:
     configs:
       default:
-        # The number of permissions available during one limit refresh period
         limit-for-period: 2
-
-        # The period after which the permissions count resets
         limit-refresh-period: 10s
-
-        # Maximum time a thread waits for permission before failing
         timeout-duration: 0s
-
-        # Register the rate limiter health indicator
-        # register-health-indicator: true
-
-        # Event consumer buffer size
-        # event-consumer-buffer-size: 100
-
   circuitbreaker:
     instances:
       inventoryServiceCircuitBreaker:
-
-        # Sliding Window Configuration
-        sliding-window-type: COUNT_BASED # TIME_BASED or COUNT_BASED
-        sliding-window-size: 6 # Check the last 6 calls
-        minimum-number-of-calls: 5 # Minimum calls required before calculating failure rate
-
-        # Failure Threshold
+        sliding-window-type: COUNT_BASED
+        sliding-window-size: 6
+        minimum-number-of-calls: 5
         failure-rate-threshold: 50
-
-        # Open State Configuration
         wait-duration-in-open-state: 10s
-
-        # Half Open Configuration
         permitted-number-of-calls-in-half-open-state: 3
         max-wait-duration-in-half-open-state: 5s
         automatic-transition-from-open-to-half-open-enabled: true
-
-        # Exceptions to record as failures
         record-exceptions:
           - java.lang.RuntimeException
           - java.io.IOException
           - org.springframework.web.client.HttpServerErrorException
-
-        # Exceptions to ignore
         ignore-exceptions:
           - java.lang.IllegalArgumentException
-
   timelimiter:
     instances:
       inventoryServiceTimeLimiter:
         timeout-duration: 2s
         cancel-running-future: true
+  bulkhead:
+    instances:
+      inventoryServiceBulkhead:
+        max-concurrent-calls: 2
+        max-wait-duration: 10s
+  thread-pool-bulkhead:
+    instances:
+      inventoryThreadPool:
+        max-thread-pool-size: 3
+        core-thread-pool-size: 1
+        queue-capacity: 0

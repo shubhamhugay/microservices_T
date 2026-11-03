@@ -8,6 +8,7 @@ import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.client.RestTemplate;
 
 import java.net.URI;
+import java.util.concurrent.ExecutionException;
 
 @RestController
 @RequestMapping("/order")
@@ -22,7 +23,7 @@ public class OrderController {
 
 
     @PostMapping("/{productId}")
-    public String orderPlace(@PathVariable String productId) {
+    public String orderPlace(@PathVariable String productId) throws ExecutionException, InterruptedException {
 
         return orderService.placeOrder(productId);
     }

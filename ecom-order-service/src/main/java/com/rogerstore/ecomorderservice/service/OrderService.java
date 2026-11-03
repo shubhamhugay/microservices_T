@@ -9,6 +9,8 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestClient;
 import org.springframework.web.client.RestTemplate;
 
+import java.util.concurrent.ExecutionException;
+
 @Service
 public class OrderService {
     private final RestClient restClient;
@@ -25,7 +27,7 @@ public class OrderService {
     }
 
 
-    public String placeOrder(String productId) {
+    public String placeOrder(String productId) throws ExecutionException, InterruptedException {
 //        String response = restTemplate.getForObject(
 //                "http://localhost:8081/inventory/" + productId,
 //                String.class
@@ -61,7 +63,7 @@ public class OrderService {
                 }));*/
 
 
-        Inventory inventory = inventoryService.getInventory(productId).join();
+        Inventory inventory = inventoryService.getInventory(productId).get();
         updateInventory(inventory);
 //        return entity.getBody()!=null && entity.getBody().getQuantity()>0?
 //                     "Order PLaced" : "order not PLaced";
@@ -70,6 +72,10 @@ public class OrderService {
     }
 
     private void updateInventory(Inventory inventory) {
+        if(inventory.getQuantity()<=0)
+        {
+          return;
+        }
         inventory.setQuantity(inventory.getQuantity() - 1);
         inventoryClient.updateInventory(inventory);
 //                 restClient.post()
@@ -77,7 +83,6 @@ public class OrderService {
 //                .body(inventory)
 //                .retrieve()
 //                .toBodilessEntity();
-
     }
 
 
